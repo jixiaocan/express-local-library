@@ -20,8 +20,8 @@ var app = express();
 var mongoose = require('mongoose');
 
 //Set up default mongoose connection
-// var mongoDB = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/expresslearn';
-var dev_db_url = 'mongodb://cooluser:coolpassword@ds119748.mlab.com:19748/local_library';
+var dev_db_url = 'mongodb://127.0.0.1:27017/expresslearn';
+// var dev_db_url = 'mongodb://cooluser:coolpassword@ds119748.mlab.com:19748/local_library';
 var mongoDB = process.env.MONGODB_URI || dev_db_url;
 mongoose.connect(mongoDB);
 

@@ -10,6 +10,8 @@ block content
         for book in book_list
           if bookinstance
             option(value=book._id selected=(bookinstance.book.toString()==book._id.toString() ? 'selected' : false)) #{book.title}
+          else if thebook
+            option(value=book._id selected=(thebook._id.toString()==book._id.toString() ? 'selected' : false)) #{book.title}
           else
             option(value=book._id) #{book.title}
         

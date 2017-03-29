@@ -15,7 +15,7 @@ exports.index = function(req, res) {
     		BookInstance.count(callback);
     	},
     	book_instance_available_count: function(callback){
-    		BookInstance.count({status: 'Availbale'}, callback);
+    		BookInstance.count({status: 'Available'}, callback);
     	},
     	author_count: function(callback){
     		Author.count(callback);
@@ -53,8 +53,75 @@ exports.book_detail = function(req, res, next) {
         }
     }, function(err, results){
         if(err) {return next(err);}
-        res.render('book_detail',{title:'Title',book: results.book, book_instances:results.book_instance});
+        res.render('book_detail',{title:'Book Detail',book: results.book, book_instances:results.book_instance});
     });
+};
+
+// ADD: Display book instance create from on GET
+exports.book_createinstance_get = function(req, res, next) {
+    req.sanitize('id').escape();
+    req.sanitize('id').trim();
+
+    async.parallel({
+        books: function(callback){
+            Book.find({},'title').exec(callback);
+        },
+        book: function(callback){
+            Book.findById(req.params.id).exec(callback);
+        }
+    },function(err, results){
+        if(err) { return next(err);}
+        res.render('bookinstance_form',{title:'Create BookInstance', book_list:results.books, thebook: results.book});
+    });
+
+};
+
+// ADD: Display book instance create from on POST
+exports.book_createinstance_post = function(req, res, next) {
+    req.checkBody('book', 'Book must be specified').notEmpty(); 
+    req.checkBody('imprint', 'Imprint must be specified').notEmpty();
+    req.checkBody('due_back', 'Invalid date').optional({ checkFalsy: false }).isDate();
+
+    req.sanitize('book').escape();
+    req.sanitize('imprint').escape();
+    req.sanitize('status').escape();
+    req.sanitize('book').trim();
+    req.sanitize('imprint').trim();   
+    req.sanitize('status').trim();
+    req.sanitize('due_back').toDate();
+
+    var bookinstance = new BookInstance({
+        book: req.body.book,
+        imprint: req.body.imprint, 
+        status: req.body.status,
+        due_back: req.body.due_back
+    });
+    var errors = req.validationErrors();
+
+     if (errors) {
+        
+        Book.find({},'title').exec(function (err, books) {
+            if (err) { return next(err); }
+                //Successful, so render
+                res.render('bookinstance_form', {
+                    title: 'Create BookInstance', 
+                    book_list : books, 
+                    selected_book : bookinstance.book._id, 
+                    errors: errors, 
+                    bookinstance: bookinstance 
+                });
+        });
+        return;
+    } 
+    else {
+    // Data from form is valid
+        bookinstance.save(function (err) {
+            if (err) { return next(err); }
+               //successful - redirect to new book-instance record.
+               console.log(bookinstance);
+               res.redirect('/catalog/book/' + bookinstance.book);
+        }); 
+    }
 };
 
 // Display book create form on GET

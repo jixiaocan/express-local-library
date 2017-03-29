@@ -1,19 +1,22 @@
 #! /usr/bin/env node
 
 console.log('This script populates a some test books, authors, genres and bookinstances to your database. Specified database as argument - e.g.: populatedb mongodb://your_username:your_password@your_dabase_url');
+// how to use 
+// 1. npm install async --save
+// 2. node populatedb <your mongodb url>​​​​
 
 //Get arguments passed on command line
 var userArgs = process.argv.slice(2);
 if (!userArgs[0].startsWith('mongodb://')) {
     console.log('ERROR: You need to specify a valid mongodb URL as the first argument');
-    return
+    return;
 }
 
-var async = require('async')
-var Book = require('./models/book')
-var Author = require('./models/author')
-var Genre = require('./models/genre')
-var BookInstance = require('./models/bookinstance')
+var async = require('async');
+var Book = require('./models/book');
+var Author = require('./models/author');
+var Genre = require('./models/genre');
+var BookInstance = require('./models/bookinstance');
 
 
 var mongoose = require('mongoose');
@@ -22,26 +25,26 @@ mongoose.connect(mongoDB);
 var db = mongoose.connection;
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-var authors = []
-var genres = []
-var books = []
-var bookinstances = []
+var authors = [];
+var genres = [];
+var books = [];
+var bookinstances = [];
 
 function authorCreate(first_name, family_name, d_birth, d_death, cb) {
-  authordetail = {first_name:first_name , family_name: family_name }
-  if (d_birth != false) authordetail.date_of_birth = d_birth
-  if (d_death != false) authordetail.date_of_death = d_death
+  authordetail = {first_name:first_name , family_name: family_name };
+  if (d_birth != false) authordetail.date_of_birth = d_birth;
+  if (d_death != false) authordetail.date_of_death = d_death;
   
   var author = new Author(authordetail);
        
   author.save(function (err) {
     if (err) {
-      cb(err, null)
-      return
+      cb(err, null);
+      return;
     }
     console.log('New Author: ' + author);
-    authors.push(author)
-    cb(null, author)
+    authors.push(author);
+    cb(null, author);
   }  );
 }
 
@@ -54,7 +57,7 @@ function genreCreate(name, cb) {
       return;
     }
     console.log('New Genre: ' + genre);
-    genres.push(genre)
+    genres.push(genre);
     cb(null, genre);
   }   );
 }
@@ -65,18 +68,18 @@ function bookCreate(title, summary, isbn, author, genre, cb) {
     summary: summary,
     author: author,
     isbn: isbn
-  }
-  if (genre != false) bookdetail.genre = genre
+  };
+  if (genre != false) bookdetail.genre = genre;
     
   var book = new Book(bookdetail);    
   book.save(function (err) {
     if (err) {
-      cb(err, null)
-      return
+      cb(err, null);
+      return;
     }
     console.log('New Book: ' + book);
-    books.push(book)
-    cb(null, book)
+    books.push(book);
+    cb(null, book);
   }  );
 }
 
@@ -85,20 +88,20 @@ function bookInstanceCreate(book, imprint, due_back, status, cb) {
   bookinstancedetail = { 
     book: book,
     imprint: imprint
-  }    
-  if (due_back != false) bookinstancedetail.due_back = due_back
-  if (status != false) bookinstancedetail.status = status
+  };
+  if (due_back != false) bookinstancedetail.due_back = due_back;
+  if (status != false) bookinstancedetail.status = status;
     
   var bookinstance = new BookInstance(bookinstancedetail);    
   bookinstance.save(function (err) {
     if (err) {
       console.log('ERROR CREATING BookInstance: ' + bookinstance);
-      cb(err, null)
-      return
+      cb(err, null);
+      return;
     }
     console.log('New BookInstance: ' + bookinstance);
-    bookinstances.push(bookinstance)
-    cb(null, book)
+    bookinstances.push(bookinstance);
+    cb(null, book);
   }  );
 }
 
@@ -156,7 +159,7 @@ function createBooks(cb) {
           bookCreate('Test Book 1', 'Summary of test book 1', 'ISBN111111', authors[4], [genres[0],genres[1]], callback);
         },
         function(callback) {
-          bookCreate('Test Book 2', 'Summary of test book 2', 'ISBN222222', authors[4], false, callback)
+          bookCreate('Test Book 2', 'Summary of test book 2', 'ISBN222222', authors[4], false, callback);
         }
         ],
         // optional callback
@@ -167,37 +170,37 @@ function createBooks(cb) {
 function createBookInstances(cb) {
     async.parallel([
         function(callback) {
-          bookInstanceCreate(books[0], 'London Gollancz, 2014.', false, 'Available', callback)
+          bookInstanceCreate(books[0], 'London Gollancz, 2014.', false, 'Available', callback);
         },
         function(callback) {
-          bookInstanceCreate(books[1], ' Gollancz, 2011.', false, 'Loaned', callback)
+          bookInstanceCreate(books[1], ' Gollancz, 2011.', false, 'Loaned', callback);
         },
         function(callback) {
-          bookInstanceCreate(books[2], ' Gollancz, 2015.', false, false, callback)
+          bookInstanceCreate(books[2], ' Gollancz, 2015.', false, false, callback);
         },
         function(callback) {
-          bookInstanceCreate(books[3], 'New York Tom Doherty Associates, 2016.', false, 'Available', callback)
+          bookInstanceCreate(books[3], 'New York Tom Doherty Associates, 2016.', false, 'Available', callback);
         },
         function(callback) {
-          bookInstanceCreate(books[3], 'New York Tom Doherty Associates, 2016.', false, 'Available', callback)
+          bookInstanceCreate(books[3], 'New York Tom Doherty Associates, 2016.', false, 'Available', callback);
         },
         function(callback) {
-          bookInstanceCreate(books[3], 'New York Tom Doherty Associates, 2016.', false, 'Available', callback)
+          bookInstanceCreate(books[3], 'New York Tom Doherty Associates, 2016.', false, 'Available', callback);
         },
         function(callback) {
-          bookInstanceCreate(books[4], 'New York, NY Tom Doherty Associates, LLC, 2015.', false, 'Available', callback)
+          bookInstanceCreate(books[4], 'New York, NY Tom Doherty Associates, LLC, 2015.', false, 'Available', callback);
         },
         function(callback) {
-          bookInstanceCreate(books[4], 'New York, NY Tom Doherty Associates, LLC, 2015.', false, 'Maintenance', callback)
+          bookInstanceCreate(books[4], 'New York, NY Tom Doherty Associates, LLC, 2015.', false, 'Maintenance', callback);
         },
         function(callback) {
-          bookInstanceCreate(books[4], 'New York, NY Tom Doherty Associates, LLC, 2015.', false, 'Loaned', callback)
+          bookInstanceCreate(books[4], 'New York, NY Tom Doherty Associates, LLC, 2015.', false, 'Loaned', callback);
         },
         function(callback) {
-          bookInstanceCreate(books[0], 'Imprint XXX2', false, false, callback)
+          bookInstanceCreate(books[0], 'Imprint XXX2', false, false, callback);
         },
         function(callback) {
-          bookInstanceCreate(books[1], 'Imprint XXX3', false, false, callback)
+          bookInstanceCreate(books[1], 'Imprint XXX3', false, false, callback);
         }
         ],
         // optional callback

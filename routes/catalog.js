@@ -18,6 +18,12 @@ router.get('/book/create', book_controller.book_create_get);
 /* POST request for creating Book. */
 router.post('/book/create', book_controller.book_create_post);
 
+/* ADD: Create book instance from book*/
+router.get('/book/:id/createinstance',book_controller.book_createinstance_get);
+
+/* ADD: Create book instance from book*/
+router.post('/book/:id/createinstance',book_controller.book_createinstance_post);
+
 /* GET request to delete Book. */
 router.get('/book/:id/delete', book_controller.book_delete_get);
 
