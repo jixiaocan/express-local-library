@@ -2,6 +2,9 @@ var Author = require('../models/author');
 var Book = require('../models/book');
 var async = require('async');
 var debug = require('debug')('author');
+var moment = require('moment');
+var fs = require('fs');
+var path = require('path');
 
 // Display list of all Authors
 exports.author_list = function(req, res, next){
@@ -37,7 +40,7 @@ exports.author_create_get = function(req, res, next) {
 exports.author_create_post = function(req, res, next) {
     req.checkBody('first_name', 'First name must be specified.').notEmpty();
     req.checkBody('family_name', 'Family name must be specified.').notEmpty();
-    req.checkBody('family_name', 'Family name must be alphanumeric text.').isAlpha();
+    // req.checkBody('family_name', 'Family name must be alphanumeric text.').isAlpha();
     // the checkFalsy flag means that we'll accept either an empty string or null as an empty value
     req.checkBody('date_of_birth', 'Invalid date').optional({ checkFalsy: true }).isDate();
     req.checkBody('date_of_death', 'Invalid date').optional({ checkFalsy: true }).isDate();    
@@ -55,18 +58,30 @@ exports.author_create_post = function(req, res, next) {
         first_name: req.body.first_name,
         family_name: req.body.family_name,
         date_of_birth: req.body.date_of_birth,
-        date_of_death: req.body.date_of_death
+        date_of_death: req.body.date_of_death,
     });
+    var pic = req.files.headPic;
+    if(pic){
+        var filename = moment(new Date()).format('YYYYMMDD-HHmmss-') + pic.name;
+        author.photo_name = filename;
+
+        pic.mv(path.join(__dirname, '../public/uploads/' + filename), function(err) {
+            if (err) {console.log(err);}      
+        });
+    }
 
     if(errors){
         res.render('author_form',{title:'Create Author', author:author, errors:errors});
         return;
     }else {
+        console.log(author);
         author.save(function(err){
             if(err){return next(err);}
             res.redirect(author.url);
         });
     }
+
+
 };
 
 // Display Author delete form on GET
@@ -128,7 +143,7 @@ exports.author_update_get = function(req, res, next) {
             debug('update error:' + err);
             return next(err);
         }
-        debug('update author: '+ author);
+        console.log('update author: '+ author);
         res.render('author_form',{title:'Update Author', author: author});
     });
 };
@@ -140,7 +155,7 @@ exports.author_update_post = function(req, res, next) {
     
     req.checkBody('first_name', 'First name must be specified.').notEmpty();
     req.checkBody('family_name', 'Family name must be specified.').notEmpty();
-    req.checkBody('family_name', 'Family name must be alphanumeric text.').isAlpha();
+    // req.checkBody('family_name', 'Family name must be alphanumeric text.').isAlpha();
     // the checkFalsy flag means that we'll accept either an empty string or null as an empty value
     req.checkBody('date_of_birth', 'Invalid date').optional({ checkFalsy: true }).isDate();
     req.checkBody('date_of_death', 'Invalid date').optional({ checkFalsy: true }).isDate();    
@@ -161,6 +176,17 @@ exports.author_update_post = function(req, res, next) {
         date_of_death: req.body.date_of_death,
         _id:req.params.id //This is required, or a new ID will be assigned!
     });
+
+    var pic = req.files.headPic;
+    if(pic){
+        var filename = moment(new Date()).format('YYYYMMDD-HHmmss-') + pic.name;
+        author.photo_name = filename;
+        console.log('upload pic');
+
+        pic.mv(path.join(__dirname, '../public/uploads/' + filename), function(err) {
+            if (err) {console.log(err);}      
+        });
+    }
 
     if(errors){
         res.render('author_form',{title:'Update Author', author:author, errors:errors});

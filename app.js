@@ -6,6 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 
+var fileUpload = require('express-fileupload'); 
+
 var index = require('./routes/index');
 var users = require('./routes/users');
 //Import routes for "catalog" area of site
@@ -43,6 +45,7 @@ app.use(expressValidator());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(fileUpload());
 app.use(compression()); //Compress all routes
 app.use(helmet());
 app.use('/', index);

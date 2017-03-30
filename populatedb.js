@@ -8,6 +8,7 @@ console.log('This script populates a some test books, authors, genres and bookin
 //Get arguments passed on command line
 var userArgs = process.argv.slice(2);
 if (!userArgs[0].startsWith('mongodb://')) {
+    console.log(userArgs[0]);
     console.log('ERROR: You need to specify a valid mongodb URL as the first argument');
     return;
 }

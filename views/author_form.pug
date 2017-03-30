@@ -3,7 +3,7 @@ extends layout
 block content
 	h1=title
 
-	form(method='post' action='')
+	form(method='post' action='' enctype="multipart/form-data")
 		div.form-group
 			label(for='first_name') First Name:
 			input#first_name.form-control(type='text',placeholder='First name (Christian) last' name='first_name' required='true' value=(undefined===author ? '' : author.first_name))
@@ -14,9 +14,15 @@ block content
 			input#date_of_birth.form-control(type='date',placeholder='yyyy/mm/dd', name='date_of_birth', value=(undefined===author ? '' : author.date_of_birth_formatted))
 			label(for='date_of_death') Date of death:
 			input#date_of_death.form-control(type='date',placeholder='yyyy/mm/dd', name='date_of_death', value=(undefined===author ? '' : author.date_of_death_formatted))
+		div.upload-body
+			//- span.glyphicon.glyphicon-camera
+			img(id="userPic" width="120" src=(undefined===author || author.photo_name == ''  ? '/images/photo_default.jpg' : "/uploads/" + author.photo_name))
+			img(class="shadow" src="/images/shadow_photo.png" style="display:none")
+			input(id="upload-input" type="file" name="headPic" accept="image/*" title="upload author photo")
 		button.btn.btn-primary(type='submit') Submit
 
 	if errors
 		ul
 			for error in errors
 				li!=error.msg
+	script(src='/javascripts/upload.js')

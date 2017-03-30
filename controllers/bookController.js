@@ -162,7 +162,7 @@ exports.book_create_post = function(req, res, next) {
         author: req.body.author,
         summary: req.body.summary,
         isbn: req.body.isbn,
-        genre: (typeof req.genre==='undefined') ? [] : req.body.genre.split(",")
+        genre: (typeof req.body.genre==='undefined') ? [] : req.body.genre.split(",")
     });
 
     console.log('BOOK: ' + book);

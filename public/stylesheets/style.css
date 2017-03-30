@@ -34,3 +34,31 @@ ul.links {
 	padding: 0;
 	list-style: none;
 }
+
+.upload-body{
+  position: relative;
+  width: 120px;
+  height: 120px;
+  text-align: center;
+  vertical-align: middle;
+  background: lightgrey;
+  margin-bottom: 5px;
+}
+.upload-body * {
+    position: absolute;
+    width: 119px;
+    height: 119px;
+    top: 0;
+    left: 0;
+}
+
+#upload-input {
+  opacity: 0;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.shadow {
+  opacity: .8;
+}
+
